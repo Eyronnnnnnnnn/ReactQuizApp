@@ -10,23 +10,23 @@ const [score , setcurrentScore] = useState(0);
 
 const handleAnswer = (choice)=>{
 
-  const us
+  const userChoice = choice.trim().toLowerCase()
+  const CorrectAnswer = Question[currentIndex].answer.trim().toLowerCase();
 
-  if(choice === Question[currentIndex].answer){
+  if(userChoice === CorrectAnswer){
     alert("correct");
+    setcurrentScore(score + 1);
    
   }else{
     alert("wrong")
   }
 
-   if (currentIndex < Question.length - 1) {
-      setcurrentIndex(prevIndex => prevIndex + 1)
-    } else {
-      // end of quiz
-      alert(`Quiz Finished! Your score: ${score + 1}/${Question.length}`)
-    }
-
-   setcurrentIndex( index=> index + 1);
+ if (currentIndex < Question.length - 1) {
+    setcurrentIndex(prevIndex => prevIndex + 1)
+  } else {
+    alert(`Quiz Finished! Your score: ${score + 1}/${Question.length}`)
+  }
+  
 }
 
   return (
