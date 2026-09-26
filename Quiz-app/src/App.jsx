@@ -4,6 +4,7 @@ import QuestionCard from './components/QuestionCard'
 import Question from './data/Question'
 
 
+
 function App() {
 const [currentIndex , setcurrentIndex] = useState(0)
 const [score , setcurrentScore] = useState(0);
