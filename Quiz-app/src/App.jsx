@@ -1,75 +1,75 @@
-  import { useState } from 'react'
-  import Header from './components/Header'
-  import QuestionCard from './components/QuestionCard'
-  import Question from './data/Question'
-  import PopupCard  from './components/popupCard'
+import { useState } from 'react'
+import Header from './components/Header'
+import QuestionCard from './components/QuestionCard'
+import Question from './data/Question'
+import PopupCard from './components/popupCard'
+import Result from './components/Result'
 
+function App() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [score, setScore] = useState(0)
+  const [showPopup, setShowPopup] = useState(false)
+  const [isWrong, setIsWrong] = useState(false)
+  const [isFinished, setIsFinished] = useState(false)
 
-
-  function App() {
-  const [currentIndex , setcurrentIndex] = useState(0)
-  const [score , setcurrentScore] = useState(0);
-  const [showpopUp , setshowpopUp] = useState(false);
-
-
-
-  const donequiz = [
-    {qdone : "you are now done to your quiz congrats"}
-  ]
-
-  const handleAnswer = (choice)=>{
+  const handleAnswer = (choice) => {
+    if (showPopup || isFinished) return
 
     const userChoice = choice.trim().toLowerCase()
-    const CorrectAnswer = Question[currentIndex].answer.trim().toLowerCase();
+    const correctAnswer = Question[currentIndex].answer.trim().toLowerCase()
+    const isCorrect = userChoice === correctAnswer
 
-    if(userChoice === CorrectAnswer){
-      setcurrentScore(score + 1);
-      setshowpopUp(true);
-    
-    }else{
-      alert("wrong")
+    setIsWrong(!isCorrect)
+    if (isCorrect) {
+      setScore(previousScore => previousScore + 1)
     }
+    // Keep this question selected until its feedback is dismissed.
+    setShowPopup(true)
+  }
 
-  if (currentIndex < Question.length - 1) {
-      setcurrentIndex(prevIndex => prevIndex + 1)
+  const closeFeedback = () => {
+    setShowPopup(false)
+    setIsWrong(false)
+
+    if (currentIndex === Question.length - 1) {
+      setIsFinished(true)
     } else {
-      setshowpopUp(true);
-      setcurrentIndex(0);
-    
+      setCurrentIndex(previousIndex => previousIndex + 1)
     }
-    
   }
 
-  const restartQuiz = ()=>{
-    setcurrentIndex(0);
-  
+  const restartQuiz = () => {
+    setCurrentIndex(0)
+    setScore(0)
+    setShowPopup(false)
+    setIsWrong(false)
+    setIsFinished(false)
   }
 
-    return (
+  return (
     <div>
-        <Header />
-
-      <div className='w-full h-140 flex justify-center items-center '>
-      <QuestionCard
-      question={Question[currentIndex].question}
-      choices={Question[currentIndex].choices}
-      handleAnswer = {handleAnswer}
-      restartQuiz = {restartQuiz}
-      />
+      <Header />
+      <div className="w-full h-140 flex justify-center items-center">
+        {isFinished ? (
+          <Result score={score} total={Question.length} restartQuiz={restartQuiz} />
+        ) : (
+          <QuestionCard
+            question={Question[currentIndex].question}
+            choices={Question[currentIndex].choices}
+            handleAnswer={handleAnswer}
+            restartQuiz={restartQuiz}
+          />
+        )}
       </div>
-      { showpopUp && (
+      {showPopup && (
         <PopupCard
-        answer={Question[currentIndex].answer}
-        onClose={()=>setshowpopUp(false)}
-        donequiz = {donequiz[0].qdone}
-        ifFinish = {currentIndex === Question.length - 1}
-        score = {score}
-      
+          answer={Question[currentIndex].answer}
+          onClose={closeFeedback}
+          isWrong={isWrong}
         />
       )}
     </div>
-      
-    )
-  }
+  )
+}
 
-  export default App
+export default App
